@@ -3,10 +3,12 @@ package sqlbuild
 import (
 	"errors"
 	"reflect"
+	"strings"
 )
 
 var (
 	ErrNoStruct = errors.New("provided value is not a struct")
+	ErrNoId     = errors.New("need an id in the structure")
 )
 
 func getStructName(s any) (sName string, err error) {
@@ -40,4 +42,17 @@ func getStructFields(s any) map[string]reflect.Value {
 	}
 
 	return fields
+}
+
+func getIdFromFields(fields map[string]reflect.Value) (key string, value reflect.Value, err error) {
+	for fieldName, fieldValue := range fields {
+		if strings.ToLower(fieldName) == "id" {
+			key = fieldName
+			value = fieldValue
+			return
+		}
+	}
+
+	err = ErrNoId
+	return
 }
