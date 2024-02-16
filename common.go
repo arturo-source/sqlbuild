@@ -23,3 +23,21 @@ func getStructName(s any) (sName string, err error) {
 
 	return
 }
+
+func getStructFields(s any) map[string]reflect.Value {
+	t := reflect.TypeOf(s)
+	v := reflect.ValueOf(s)
+	fields := make(map[string]reflect.Value)
+
+	for i := 0; i < t.NumField(); i++ {
+		field := t.Field(i)
+		fieldName := field.Tag.Get("db")
+		if fieldName == "" {
+			fieldName = field.Name
+		}
+
+		fields[fieldName] = v.Field(i)
+	}
+
+	return fields
+}
