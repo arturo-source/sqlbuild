@@ -10,6 +10,7 @@ func CreateTable(s any) (query string, err error) {
 		return query, err
 	}
 
+	// TODO
 	query = fmt.Sprintf("create table %s ()", sName)
 	return
 }
