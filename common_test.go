@@ -50,7 +50,7 @@ func TestGetStructName(t *testing.T) {
 		t.Run(tC.desc, func(t *testing.T) {
 			sName, err := getStructName(tC.gotStruct)
 
-			if errors.Is(tC.wantError, err) {
+			if !errors.Is(tC.wantError, err) {
 				t.Errorf("Wanted error=%s, got %s", tC.wantError, err)
 			}
 

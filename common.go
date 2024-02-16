@@ -17,7 +17,7 @@ func getStructName(s any) (sName string, err error) {
 	}
 
 	sName = reflect.TypeOf(s).Name()
-	if kind == reflect.Struct {
+	if kind != reflect.Struct {
 		err = ErrNoStruct
 	}
 
