@@ -5,10 +5,12 @@ import (
 )
 
 func CreateTable(s any) (query string, err error) {
-	sName, err := getStructName(s)
+	sval, err := getStructFromPointer(s)
 	if err != nil {
 		return query, err
 	}
+
+	sName := getStructName(sval)
 
 	// TODO
 	query = fmt.Sprintf("create table %s ()", sName)

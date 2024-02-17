@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestGetStructName(t *testing.T) {
+func TestGetStructFromPointer(t *testing.T) {
 	type Person struct {
 		Name string
 		Age  int
@@ -18,13 +18,11 @@ func TestGetStructName(t *testing.T) {
 	testCases := []struct {
 		desc      string
 		gotStruct any
-		wantName  string
 		wantError error
 	}{
 		{
 			desc:      "A struct",
 			gotStruct: p,
-			wantName:  "Person",
 			wantError: nil,
 		},
 		{
@@ -35,7 +33,6 @@ func TestGetStructName(t *testing.T) {
 		{
 			desc:      "A struct from a pointer",
 			gotStruct: &p,
-			wantName:  "Person",
 			wantError: nil,
 		},
 		{
@@ -47,14 +44,9 @@ func TestGetStructName(t *testing.T) {
 
 	for _, tC := range testCases {
 		t.Run(tC.desc, func(t *testing.T) {
-			sName, err := getStructName(tC.gotStruct)
-
+			_, err := getStructFromPointer(tC.gotStruct)
 			if !errors.Is(tC.wantError, err) {
 				t.Errorf("Wanted error=%s, got %s", tC.wantError, err)
-			}
-
-			if tC.wantError == nil && tC.wantName != sName {
-				t.Errorf("Wanted struct name '%s', got '%s'", tC.wantName, sName)
 			}
 		})
 	}
@@ -128,7 +120,12 @@ func TestGetStructFieldNames(t *testing.T) {
 	}
 	for _, tC := range testCases {
 		t.Run(tC.desc, func(t *testing.T) {
-			fields := getStructFields(tC.person)
+			person, err := getStructFromPointer(tC.person)
+			if err != nil {
+				t.Error(err)
+			}
+
+			fields := getStructFields(person)
 			fieldNames := getKeys(fields)
 
 			if !isSameArray(tC.want, fieldNames) {
@@ -162,7 +159,7 @@ func TestGetIdFromFields(t *testing.T) {
 	for _, tC := range testCases {
 		t.Run(tC.desc, func(t *testing.T) {
 			key, value, err := getIdFromFields(tC.fields)
-			if tC.wantErr != err {
+			if !errors.Is(tC.wantErr, err) {
 				t.Errorf("Wanted '%s', got '%s'", tC.wantErr, err)
 			}
 

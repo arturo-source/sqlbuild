@@ -5,22 +5,24 @@ import (
 )
 
 func SelectAll(s any) (query string, err error) {
-	sName, err := getStructName(s)
+	sval, err := getStructFromPointer(s)
 	if err != nil {
 		return query, err
 	}
 
+	sName := getStructName(sval)
 	query = fmt.Sprintf("select * from %s", sName)
 	return
 }
 
 func SelectById(s any) (query string, err error) {
-	sName, err := getStructName(s)
+	sval, err := getStructFromPointer(s)
 	if err != nil {
 		return query, err
 	}
 
-	fields := getStructFields(s)
+	sName := getStructName(sval)
+	fields := getStructFields(sval)
 	idName, idValue, err := getIdFromFields(fields)
 	if err != nil {
 		return query, err

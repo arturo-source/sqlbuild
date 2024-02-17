@@ -14,20 +14,25 @@ var (
 	ErrNoId     = errors.New("need an id in the structure")
 )
 
-// getStructName returns the name of the struct as a string
-func getStructName(s any) (sName string, err error) {
-	val := reflect.ValueOf(s)
+// getStructFromPointer unreferences the pointer until it gets a struct
+func getStructFromPointer(s any) (val reflect.Value, err error) {
+	val = reflect.ValueOf(s)
+
 	kind := val.Kind()
 	if kind == reflect.Pointer {
-		return getStructName(val.Elem().Interface())
+		return getStructFromPointer(val.Elem().Interface())
 	}
 
-	sName = reflect.TypeOf(s).Name()
 	if kind != reflect.Struct {
 		err = ErrNoStruct
 	}
 
 	return
+}
+
+// getStructName returns the name of the struct as a string
+func getStructName(val reflect.Value) string {
+	return reflect.TypeOf(val).Name()
 }
 
 // getStructFields expects any struct and saves each field into a map[string]reflect.Value, it will set the Tag `db:""` as key of the map if it is set
@@ -38,9 +43,8 @@ func getStructName(s any) (sName string, err error) {
 //		Name string `db:"name"`
 //		Age  int
 //	}
-func getStructFields(s any) Fields {
-	t := reflect.TypeOf(s)
-	v := reflect.ValueOf(s)
+func getStructFields(val reflect.Value) Fields {
+	t := reflect.TypeOf(val)
 	fields := make(Fields)
 
 	for i := 0; i < t.NumField(); i++ {
@@ -50,7 +54,7 @@ func getStructFields(s any) Fields {
 			fieldName = field.Name
 		}
 
-		fields[fieldName] = v.Field(i)
+		fields[fieldName] = val.Field(i)
 	}
 
 	return fields
