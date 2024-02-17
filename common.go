@@ -32,7 +32,7 @@ func getStructFromPointer(s any) (val reflect.Value, err error) {
 
 // getStructName returns the name of the struct as a string
 func getStructName(val reflect.Value) string {
-	return reflect.TypeOf(val).Name()
+	return reflect.TypeOf(val.Interface()).Name()
 }
 
 // getStructFields expects any struct and saves each field into a map[string]reflect.Value, it will set the Tag `db:""` as key of the map if it is set
@@ -44,7 +44,7 @@ func getStructName(val reflect.Value) string {
 //		Age  int
 //	}
 func getStructFields(val reflect.Value) Fields {
-	t := reflect.TypeOf(val)
+	t := reflect.TypeOf(val.Interface())
 	fields := make(Fields)
 
 	for i := 0; i < t.NumField(); i++ {

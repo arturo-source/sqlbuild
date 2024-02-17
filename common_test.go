@@ -52,6 +52,25 @@ func TestGetStructFromPointer(t *testing.T) {
 	}
 }
 
+func TestGetStructName(t *testing.T) {
+	type Person struct {
+		Name string
+		Age  int
+	}
+
+	p := Person{}
+	person, err := getStructFromPointer(p)
+	if err != nil {
+		t.Error(err)
+	}
+
+	want := "Person"
+	pName := getStructName(person)
+	if pName != want {
+		t.Errorf("Got '%s', want '%s'", pName, want)
+	}
+}
+
 func TestGetStructFieldNames(t *testing.T) {
 	type PersonEmpty struct{}
 	type Person struct {
