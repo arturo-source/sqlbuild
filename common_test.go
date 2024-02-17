@@ -2,7 +2,7 @@ package sqlbuild
 
 import (
 	"errors"
-	"fmt"
+	"reflect"
 	"testing"
 )
 
@@ -136,6 +136,39 @@ func TestGetStructFieldNames(t *testing.T) {
 			}
 		})
 	}
+}
 
-	fmt.Printf("%+v\n", getStructFields(Person{}))
+func TestGetIdFromFields(t *testing.T) {
+	testCases := []struct {
+		desc      string
+		fields    Fields
+		wantKey   string
+		wantValue reflect.Value
+		wantErr   error
+	}{
+		{
+			desc:    "Error no id found",
+			fields:  Fields{},
+			wantErr: ErrNoId,
+		},
+		{
+			desc:      "Id found",
+			fields:    Fields{"Id": reflect.ValueOf(10)},
+			wantKey:   "Id",
+			wantValue: reflect.ValueOf(10),
+			wantErr:   nil,
+		},
+	}
+	for _, tC := range testCases {
+		t.Run(tC.desc, func(t *testing.T) {
+			key, value, err := getIdFromFields(tC.fields)
+			if tC.wantErr != err {
+				t.Errorf("Wanted '%s', got '%s'", tC.wantErr, err)
+			}
+
+			if tC.wantErr == nil && (tC.wantKey != key || tC.wantValue != value) {
+				t.Errorf("Wanted %s = %v, got %s = %v", tC.wantKey, tC.wantValue, key, value)
+			}
+		})
+	}
 }
