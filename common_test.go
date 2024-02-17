@@ -172,3 +172,33 @@ func TestGetIdFromFields(t *testing.T) {
 		})
 	}
 }
+
+func TestSanitizeInput(t *testing.T) {
+	testCases := []struct {
+		desc  string
+		query string
+		args  []any
+		want  string
+	}{
+		{
+			desc:  "Sanitize without quotation marks",
+			query: "%s %v",
+			args:  []any{"abc", reflect.ValueOf(10)},
+			want:  "'abc' 10",
+		},
+		{
+			desc:  "Sanitize with quotation marks",
+			query: "%s %v",
+			args:  []any{"a'bc", reflect.ValueOf(10)},
+			want:  "'a''bc' 10",
+		},
+	}
+	for _, tC := range testCases {
+		t.Run(tC.desc, func(t *testing.T) {
+			queryResult := sanitizeInput(tC.query, tC.args...)
+			if tC.want != queryResult {
+				t.Errorf("Wanted '%s', got '%s'", tC.want, queryResult)
+			}
+		})
+	}
+}
