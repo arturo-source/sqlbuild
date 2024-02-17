@@ -3,7 +3,6 @@ package sqlbuild
 import (
 	"errors"
 	"fmt"
-	"reflect"
 	"testing"
 )
 
@@ -92,7 +91,7 @@ func TestGetStructFieldNames(t *testing.T) {
 
 		return timesRepeated == len(a)
 	}
-	getKeys := func(m map[string]reflect.Value) []string {
+	getKeys := func(m Fields) []string {
 		keys := make([]string, 0, len(m))
 		for k := range m {
 			keys = append(keys, k)

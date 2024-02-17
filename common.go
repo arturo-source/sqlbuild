@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+type Fields map[string]reflect.Value
+
 var (
 	ErrNoStruct = errors.New("provided value is not a struct")
 	ErrNoId     = errors.New("need an id in the structure")
@@ -26,10 +28,10 @@ func getStructName(s any) (sName string, err error) {
 	return
 }
 
-func getStructFields(s any) map[string]reflect.Value {
+func getStructFields(s any) Fields {
 	t := reflect.TypeOf(s)
 	v := reflect.ValueOf(s)
-	fields := make(map[string]reflect.Value)
+	fields := make(Fields)
 
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
@@ -44,7 +46,7 @@ func getStructFields(s any) map[string]reflect.Value {
 	return fields
 }
 
-func getIdFromFields(fields map[string]reflect.Value) (key string, value reflect.Value, err error) {
+func getIdFromFields(fields Fields) (key string, value reflect.Value, err error) {
 	for fieldName, fieldValue := range fields {
 		if strings.ToLower(fieldName) == "id" {
 			key = fieldName
