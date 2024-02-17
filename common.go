@@ -2,6 +2,7 @@ package sqlbuild
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
 	"strings"
 )
@@ -57,4 +58,16 @@ func getIdFromFields(fields Fields) (key string, value reflect.Value, err error)
 
 	err = ErrNoId
 	return
+}
+
+func sanitizeInput(query string, args ...any) string {
+	for i := range args {
+		if argStr, ok := args[i].(string); ok {
+			argStr = strings.ReplaceAll(argStr, "'", "''")
+			argStr = fmt.Sprint("'", argStr, "'")
+			args[i] = reflect.ValueOf(argStr)
+		}
+	}
+
+	return fmt.Sprintf(query, args...)
 }

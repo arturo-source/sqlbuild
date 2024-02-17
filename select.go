@@ -26,6 +26,6 @@ func SelectById(s any) (query string, err error) {
 		return query, err
 	}
 
-	query = fmt.Sprintf("select * from %s where %s=%v", sName, idName, idValue)
+	query = sanitizeInput("select * from %s where %s = %v", sName, idName, idValue)
 	return
 }

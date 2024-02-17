@@ -30,7 +30,7 @@ func TestSelectById(t *testing.T) {
 	}
 	p := Person{Id: 10}
 
-	want := "select * from Person where id=10"
+	want := "select * from 'Person' where 'id' = 10"
 	q, err := SelectById(p)
 	if err != nil {
 		t.Error(err)
