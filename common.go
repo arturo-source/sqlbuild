@@ -9,6 +9,15 @@ import (
 
 type Fields map[string]reflect.Value
 
+func (f Fields) GetNames() []string {
+	keys := make([]string, 0, len(f))
+	for k := range f {
+		keys = append(keys, k)
+	}
+
+	return keys
+}
+
 var (
 	ErrNoStruct = errors.New("provided value is not a struct")
 	ErrNoId     = errors.New("need an id in the structure")

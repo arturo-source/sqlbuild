@@ -102,14 +102,6 @@ func TestGetStructFieldNames(t *testing.T) {
 
 		return timesRepeated == len(a)
 	}
-	getKeys := func(m Fields) []string {
-		keys := make([]string, 0, len(m))
-		for k := range m {
-			keys = append(keys, k)
-		}
-
-		return keys
-	}
 
 	testCases := []struct {
 		desc   string
@@ -145,7 +137,7 @@ func TestGetStructFieldNames(t *testing.T) {
 			}
 
 			fields := getStructFields(person)
-			fieldNames := getKeys(fields)
+			fieldNames := fields.GetNames()
 
 			if !isSameArray(tC.want, fieldNames) {
 				t.Errorf("Wanted %v, got %v", tC.want, fieldNames)
