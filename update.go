@@ -4,6 +4,7 @@ import (
 	"strings"
 )
 
+// Update creates as 'update' query from the struct name, and sets all the values in the struct, only for the specific id
 func Update(s any) (query string, err error) {
 	sval, err := getStructFromPointer(s)
 	if err != nil {

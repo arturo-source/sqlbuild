@@ -4,6 +4,7 @@ import (
 	"fmt"
 )
 
+// SelectAll creates a 'select' query from the struct name
 func SelectAll(s any) (query string, err error) {
 	sval, err := getStructFromPointer(s)
 	if err != nil {
@@ -15,6 +16,7 @@ func SelectAll(s any) (query string, err error) {
 	return
 }
 
+// SelectById creates a 'select' query from the struct name, but only for the specific id
 func SelectById(s any) (query string, err error) {
 	sval, err := getStructFromPointer(s)
 	if err != nil {
