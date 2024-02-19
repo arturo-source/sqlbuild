@@ -19,8 +19,10 @@ func Update(s any) (query string, err error) {
 	}
 
 	keyValues := make([]string, 0, fields.len())
-	for k, v := range fields.nameValues {
-		keyValues = append(keyValues, sanitizeInput("%s = %v", k, v))
+	for _, name := range fields.getNames() {
+		key := name
+		value := fields.get(name).Interface()
+		keyValues = append(keyValues, sanitizeInput("%s = %v", key, value))
 	}
 	keyValuesStr := strings.Join(keyValues, ", ")
 

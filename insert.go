@@ -26,7 +26,7 @@ func InsertMultiple(structs []any) (query string, err error) {
 	sName := getStructName(sval)
 	fields := newFields(sval)
 	fieldsNames := fields.getNames()
-	keys := addCommasAndParenthesis(fieldsNames)
+	keys := addCommasAndParenthesis(sanitizedSlice(fieldsNames))
 
 	multipleValues := make([]string, 0, fields.len())
 	for _, s := range structs {
@@ -36,14 +36,12 @@ func InsertMultiple(structs []any) (query string, err error) {
 		}
 
 		fields := newFields(sval)
-		values := make([]string, 0, fields.len())
-
+		values := make([]any, 0, fields.len())
 		for _, fieldName := range fieldsNames {
-			value := sanitizeInput("%v", fields.get(fieldName).Interface())
-			values = append(values, value)
+			values = append(values, fields.get(fieldName).Interface())
 		}
 
-		multipleValues = append(multipleValues, addCommasAndParenthesis(values))
+		multipleValues = append(multipleValues, addCommasAndParenthesis(sanitizedSlice(values)))
 	}
 	multipleValuesStr := strings.Join(multipleValues, ", ")
 

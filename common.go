@@ -89,6 +89,15 @@ func sanitizeInput(query string, args ...any) string {
 	return fmt.Sprintf(query, args...)
 }
 
+func sanitizedSlice[T any](things []T) []string {
+	thingsSanitized := make([]string, 0, len(things))
+	for i := range things {
+		thingsSanitized = append(thingsSanitized, sanitizeInput("%v", things[i]))
+	}
+
+	return thingsSanitized
+}
+
 // getStructFromPointer unreferences the pointer until it gets a struct
 func getStructFromPointer(s any) (val reflect.Value, err error) {
 	val = reflect.ValueOf(s)
