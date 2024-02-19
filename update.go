@@ -12,14 +12,14 @@ func Update(s any) (query string, err error) {
 	}
 
 	sName := getStructName(sval)
-	fields := getStructFields(sval)
-	idName, idValue, err := getIdFromFields(fields)
+	fields := newFields(sval)
+	idName, idValue, err := fields.getId()
 	if err != nil {
 		return query, err
 	}
 
-	keyValues := make([]string, 0, len(fields))
-	for k, v := range fields {
+	keyValues := make([]string, 0, fields.len())
+	for k, v := range fields.nameValues {
 		keyValues = append(keyValues, sanitizeInput("%s = %v", k, v))
 	}
 	keyValuesStr := strings.Join(keyValues, ", ")

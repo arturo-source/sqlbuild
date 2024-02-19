@@ -7,15 +7,26 @@ import (
 	"strings"
 )
 
-type Fields map[string]reflect.Value
+type Fields struct {
+	namesOrdered []string
+	nameValues   map[string]reflect.Value
+}
 
-func (f Fields) GetNames() []string {
-	keys := make([]string, 0, len(f))
-	for k := range f {
-		keys = append(keys, k)
-	}
+func (f *Fields) len() int {
+	return len(f.namesOrdered)
+}
 
-	return keys
+func (f *Fields) set(k string, v reflect.Value) {
+	f.namesOrdered = append(f.namesOrdered, k)
+	f.nameValues[k] = v
+}
+
+func (f *Fields) get(k string) reflect.Value {
+	return f.nameValues[k]
+}
+
+func (f *Fields) getNames() []string {
+	return f.namesOrdered
 }
 
 var (
@@ -44,7 +55,7 @@ func getStructName(val reflect.Value) string {
 	return reflect.TypeOf(val.Interface()).Name()
 }
 
-// getStructFields expects any struct and saves each field into a map[string]reflect.Value, it will set the Tag `db:""` as key of the map if it is set
+// newFields (from a struct) saves each field into a map[string]reflect.Value, it will set the Tag `db:""` as key of the map if it is set
 //
 // Example:
 //
@@ -52,9 +63,9 @@ func getStructName(val reflect.Value) string {
 //		Name string `db:"name"`
 //		Age  int
 //	}
-func getStructFields(val reflect.Value) Fields {
+func newFields(val reflect.Value) Fields {
 	t := reflect.TypeOf(val.Interface())
-	fields := make(Fields)
+	fields := Fields{}
 
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
@@ -63,15 +74,15 @@ func getStructFields(val reflect.Value) Fields {
 			fieldName = field.Name
 		}
 
-		fields[fieldName] = val.Field(i)
+		fields.set(fieldName, val.Field(i))
 	}
 
 	return fields
 }
 
-// getIdFromFields finds id case insensitive inside the fields. Returns the original id key, and its value
-func getIdFromFields(fields Fields) (key string, value reflect.Value, err error) {
-	for fieldName, fieldValue := range fields {
+// getId (from Fields) finds id case insensitive inside the fields. Returns the original id key, and its value
+func (f *Fields) getId() (key string, value reflect.Value, err error) {
+	for fieldName, fieldValue := range f.nameValues {
 		if strings.ToLower(fieldName) == "id" {
 			key = fieldName
 			value = fieldValue

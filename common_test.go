@@ -136,8 +136,8 @@ func TestGetStructFieldNames(t *testing.T) {
 				t.Error(err)
 			}
 
-			fields := getStructFields(person)
-			fieldNames := fields.GetNames()
+			fields := newFields(person)
+			fieldNames := fields.getNames()
 
 			if !isSameArray(tC.want, fieldNames) {
 				t.Errorf("Wanted %v, got %v", tC.want, fieldNames)
@@ -147,21 +147,24 @@ func TestGetStructFieldNames(t *testing.T) {
 }
 
 func TestGetIdFromFields(t *testing.T) {
+	emptyStruct := reflect.ValueOf(struct{}{})
+	structWithId := reflect.ValueOf(struct{ Id int }{Id: 10})
+
 	testCases := []struct {
 		desc      string
-		fields    Fields
+		fields    reflect.Value
 		wantKey   string
 		wantValue reflect.Value
 		wantErr   error
 	}{
 		{
 			desc:    "Error no id found",
-			fields:  Fields{},
+			fields:  emptyStruct,
 			wantErr: ErrNoId,
 		},
 		{
 			desc:      "Id found",
-			fields:    Fields{"Id": reflect.ValueOf(10)},
+			fields:    structWithId,
 			wantKey:   "Id",
 			wantValue: reflect.ValueOf(10),
 			wantErr:   nil,
@@ -169,7 +172,8 @@ func TestGetIdFromFields(t *testing.T) {
 	}
 	for _, tC := range testCases {
 		t.Run(tC.desc, func(t *testing.T) {
-			key, value, err := getIdFromFields(tC.fields)
+			fields := newFields(tC.fields)
+			key, value, err := fields.getId()
 			if !errors.Is(tC.wantErr, err) {
 				t.Errorf("Wanted '%s', got '%s'", tC.wantErr, err)
 			}

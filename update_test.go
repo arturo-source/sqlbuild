@@ -40,8 +40,8 @@ func TestUpdate(t *testing.T) {
 		t.Errorf("Got %d commas, want %d '%s'", commas, wantCommas, q)
 	}
 
-	fields := getStructFields(reflect.ValueOf(p))
-	for f := range fields {
+	fields := newFields(reflect.ValueOf(p))
+	for f := range fields.nameValues {
 		if !strings.Contains(q, f) {
 			t.Errorf("Want containing %s, got query '%s'", f, q)
 		}

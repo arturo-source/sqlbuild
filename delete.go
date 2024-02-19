@@ -22,8 +22,8 @@ func DeleteById(s any) (query string, err error) {
 	}
 
 	sName := getStructName(sval)
-	fields := getStructFields(sval)
-	idName, idValue, err := getIdFromFields(fields)
+	fields := newFields(sval)
+	idName, idValue, err := fields.getId()
 	if err != nil {
 		return query, err
 	}
