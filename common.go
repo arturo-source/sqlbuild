@@ -12,7 +12,7 @@ var (
 	ErrNoId     = errors.New("need an id in the structure")
 )
 
-type Fields struct {
+type fields struct {
 	namesOrdered []string
 	nameValues   map[string]reflect.Value
 }
@@ -25,9 +25,9 @@ type Fields struct {
 //		Name string `db:"name"`
 //		Age  int
 //	}
-func newFields(val reflect.Value) Fields {
+func newFields(val reflect.Value) fields {
 	t := reflect.TypeOf(val.Interface())
-	fields := Fields{
+	fields := fields{
 		namesOrdered: make([]string, 0, t.NumField()),
 		nameValues:   make(map[string]reflect.Value),
 	}
@@ -45,25 +45,25 @@ func newFields(val reflect.Value) Fields {
 	return fields
 }
 
-func (f *Fields) len() int {
+func (f *fields) len() int {
 	return len(f.namesOrdered)
 }
 
-func (f *Fields) set(k string, v reflect.Value) {
+func (f *fields) set(k string, v reflect.Value) {
 	f.namesOrdered = append(f.namesOrdered, k)
 	f.nameValues[k] = v
 }
 
-func (f *Fields) get(k string) reflect.Value {
+func (f *fields) get(k string) reflect.Value {
 	return f.nameValues[k]
 }
 
-func (f *Fields) getNames() []string {
+func (f *fields) getNames() []string {
 	return f.namesOrdered
 }
 
-// getId (from Fields) finds id case insensitive inside the fields. Returns the original id key, and its value
-func (f *Fields) getId() (key string, value reflect.Value, err error) {
+// getId (from fields) finds id case insensitive inside the fields. Returns the original id key, and its value
+func (f *fields) getId() (key string, value reflect.Value, err error) {
 	for fieldName, fieldValue := range f.nameValues {
 		if strings.ToLower(fieldName) == "id" {
 			key = fieldName
