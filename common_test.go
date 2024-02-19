@@ -178,7 +178,7 @@ func TestGetIdFromFields(t *testing.T) {
 				t.Errorf("Wanted '%s', got '%s'", tC.wantErr, err)
 			}
 
-			if tC.wantErr == nil && (tC.wantKey != key || tC.wantValue != value) {
+			if tC.wantErr == nil && (tC.wantKey != key || tC.wantValue.Interface() != value.Interface()) {
 				t.Errorf("Wanted %s = %v, got %s = %v", tC.wantKey, tC.wantValue, key, value)
 			}
 		})

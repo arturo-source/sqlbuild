@@ -27,7 +27,10 @@ type Fields struct {
 //	}
 func newFields(val reflect.Value) Fields {
 	t := reflect.TypeOf(val.Interface())
-	fields := Fields{}
+	fields := Fields{
+		namesOrdered: make([]string, 0, t.NumField()),
+		nameValues:   make(map[string]reflect.Value),
+	}
 
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
