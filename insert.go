@@ -1,10 +1,5 @@
 package sqlbuild
 
-import (
-	"fmt"
-	"strings"
-)
-
 // Insert creates a 'insert' query from the struct name, and sets all values in the struct
 func Insert(s any) (query string, err error) {
 	return InsertMultiple([]any{s})
@@ -17,18 +12,10 @@ func InsertMultiple[T any](structs []T) (query string, err error) {
 		return query, err
 	}
 
-	addCommasAndParenthesis := func(things []string) string {
-		withCommas := strings.Join(things, ", ")
-		withParenthesis := fmt.Sprint("(", withCommas, ")")
-		return withParenthesis
-	}
-
 	sName := getStructName(sval)
 	fields := newFields(sval)
-	fieldsNames := fields.getNames()
-	keys := addCommasAndParenthesis(sanitizedSlice(fieldsNames, "\""))
 
-	multipleValues := make([]string, 0, fields.len())
+	multipleFieldsValues := make([][]any, 0, len(structs))
 	for _, s := range structs {
 		sval, err := getStructFromPointer(s)
 		if err != nil {
@@ -36,18 +23,15 @@ func InsertMultiple[T any](structs []T) (query string, err error) {
 		}
 
 		fields := newFields(sval)
-		values := make([]any, 0, fields.len())
-		for _, fieldName := range fieldsNames {
-			values = append(values, fields.get(fieldName).Interface())
+		fieldsValues := make([]any, 0, fields.len())
+		for _, fieldName := range fields.namesOrdered {
+			fieldsValues = append(fieldsValues, fields.get(fieldName).Interface())
 		}
 
-		multipleValues = append(multipleValues, addCommasAndParenthesis(sanitizedSlice(values, "'")))
+		multipleFieldsValues = append(multipleFieldsValues, fieldsValues)
 	}
-	multipleValuesStr := strings.Join(multipleValues, ", ")
 
-	query = "insert into %s __keys__ values __multiple_values__"
-	query = strings.ReplaceAll(query, "__keys__", keys)
-	query = strings.ReplaceAll(query, "__multiple_values__", multipleValuesStr)
-	query = sanitizeInput(query, sName)
+	queryTemplate := `insert into {{s .tableName "\""}} ({{range $i, $fName := .fieldsNames}}{{if $i}}, {{end}}$fName{{end}}) values {{range $i, $mfv := .multipleFieldsValues}}{{if $i}}, {{end}}({{range $j, $value := $mfv}}{{if $j}}, {{end}}{{$value}}{{end}}){{end}}`
+	query = executeTemplate(queryTemplate, args{"tableName": sName, "fieldsNames": fields.namesOrdered, "multipleFieldsValues": multipleFieldsValues})
 	return
 }

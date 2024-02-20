@@ -1,7 +1,5 @@
 package sqlbuild
 
-import "fmt"
-
 // Drop creates a 'drop table' query from the struct name
 func Drop(s any) (query string, err error) {
 	sval, err := getStructFromPointer(s)
@@ -10,7 +8,6 @@ func Drop(s any) (query string, err error) {
 	}
 
 	sName := getStructName(sval)
-	query = fmt.Sprintf("drop table %s", sName)
-
+	query = executeTemplate(`drop table {{s .tableName "\""}}`, args{"tableName": sName})
 	return
 }

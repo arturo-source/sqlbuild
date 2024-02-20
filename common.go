@@ -1,10 +1,11 @@
 package sqlbuild
 
 import (
+	"bytes"
 	"errors"
-	"fmt"
 	"reflect"
 	"strings"
+	"text/template"
 )
 
 var (
@@ -58,10 +59,6 @@ func (f *fields) get(k string) reflect.Value {
 	return f.nameValues[k]
 }
 
-func (f *fields) getNames() []string {
-	return f.namesOrdered
-}
-
 // getId (from fields) finds id case insensitive inside the fields. Returns the original id key, and its value
 func (f *fields) getId() (key string, value reflect.Value, err error) {
 	for fieldName, fieldValue := range f.nameValues {
@@ -76,34 +73,28 @@ func (f *fields) getId() (key string, value reflect.Value, err error) {
 	return
 }
 
-// sanitizeInput format like fmt.Sprintf, but sanitizes args to avoid sql injections
-func sanitizeInput(query string, args ...any) string {
-	for i := range args {
-		args[i] = reflect.ValueOf(sanitize(args[i], "'")) // <-- Change
-	}
+type args map[string]any
 
-	return fmt.Sprintf(query, args...)
+// executeTemplate adds "s" func to avoid sql injections, and executes the query as text/template
+func executeTemplate(query string, arguments args) string {
+	t := template.Must(template.New("query").Funcs(template.FuncMap{"s": sanitize}).Parse(query))
+	buf := &bytes.Buffer{}
+	t.Execute(buf, arguments)
+
+	return buf.String()
 }
 
-func sanitize(thing any, quoteMark string) string {
-	if thingStr, ok := any(thing).(string); ok {
+// sanitize checks if the `thing` contains `quoteMark`, to avoid sql injections
+func sanitize(thing any, quoteMark string) any {
+	if thingStr, ok := thing.(string); ok {
 		if strings.Contains(thingStr, quoteMark) {
 			thingStr = strings.ReplaceAll(thingStr, quoteMark, quoteMark+quoteMark)
 		}
 
-		return fmt.Sprint(quoteMark, thingStr, quoteMark)
+		thing = any(quoteMark + thingStr + quoteMark)
 	}
 
-	return fmt.Sprint(thing)
-}
-
-func sanitizedSlice[T any](things []T, quoteMark string) []string {
-	thingsSanitized := make([]string, 0, len(things))
-	for i := range things {
-		thingsSanitized = append(thingsSanitized, sanitize(things[i], quoteMark))
-	}
-
-	return thingsSanitized
+	return thing
 }
 
 // getStructFromPointer unreferences the pointer until it gets a struct

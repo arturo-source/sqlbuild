@@ -1,7 +1,5 @@
 package sqlbuild
 
-import "fmt"
-
 // DeleteAll creates a 'delete' query from the struct name
 func DeleteAll(s any) (query string, err error) {
 	sval, err := getStructFromPointer(s)
@@ -10,7 +8,7 @@ func DeleteAll(s any) (query string, err error) {
 	}
 
 	sName := getStructName(sval)
-	query = fmt.Sprintf("delete from %s", sName)
+	query = executeTemplate(`delete from {{s .tableName "\""}}`, args{"tableName": sName})
 	return
 }
 
@@ -28,6 +26,8 @@ func DeleteById(s any) (query string, err error) {
 		return query, err
 	}
 
-	query = sanitizeInput("delete from %s where %s = %v", sName, idName, idValue)
+	query = executeTemplate(
+		`delete from {{s .tableName "\""}} where {{s .id "\""}} = {{s .idValue "'"}}`,
+		args{"tableName": sName, "id": idName, "idValue": idValue})
 	return
 }

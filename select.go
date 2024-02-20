@@ -1,9 +1,5 @@
 package sqlbuild
 
-import (
-	"fmt"
-)
-
 // SelectAll creates a 'select' query from the struct name
 func SelectAll(s any) (query string, err error) {
 	sval, err := getStructFromPointer(s)
@@ -12,7 +8,7 @@ func SelectAll(s any) (query string, err error) {
 	}
 
 	sName := getStructName(sval)
-	query = fmt.Sprintf("select * from %s", sName)
+	query = executeTemplate(`select * from {{s .tableName "\""}}`, args{"tableName": sName})
 	return
 }
 
@@ -30,6 +26,8 @@ func SelectById(s any) (query string, err error) {
 		return query, err
 	}
 
-	query = sanitizeInput("select * from %s where %s = %v", sName, idName, idValue)
+	query = executeTemplate(
+		`select * from {{s .tableName "\""}} where {{s .id "\""}} = {{s .idValue "'"}}`,
+		args{"tableName": sName, "id": idName, "idValue": idValue})
 	return
 }
