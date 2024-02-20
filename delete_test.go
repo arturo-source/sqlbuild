@@ -11,7 +11,7 @@ func TestDeleteAll(t *testing.T) {
 	}
 	p := Person{}
 
-	want := "delete from Person"
+	want := `delete from "Person"`
 	q, err := DeleteAll(p)
 	if err != nil {
 		t.Error(err)
@@ -30,7 +30,7 @@ func TestDeleteById(t *testing.T) {
 	}
 	p := Person{Id: 10}
 
-	want := "delete from 'Person' where 'id' = 10"
+	want := `delete from "Person" where "id" = 10`
 	q, err := DeleteById(p)
 	if err != nil {
 		t.Error(err)
