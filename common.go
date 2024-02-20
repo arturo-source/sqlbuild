@@ -79,20 +79,28 @@ func (f *fields) getId() (key string, value reflect.Value, err error) {
 // sanitizeInput format like fmt.Sprintf, but sanitizes args to avoid sql injections
 func sanitizeInput(query string, args ...any) string {
 	for i := range args {
-		if argStr, ok := args[i].(string); ok {
-			argStr = strings.ReplaceAll(argStr, "'", "''")
-			argStr = fmt.Sprint("'", argStr, "'")
-			args[i] = reflect.ValueOf(argStr)
-		}
+		args[i] = reflect.ValueOf(sanitize(args[i], "'")) // <-- Change
 	}
 
 	return fmt.Sprintf(query, args...)
 }
 
-func sanitizedSlice[T any](things []T) []string {
+func sanitize(thing any, quoteMark string) string {
+	if thingStr, ok := any(thing).(string); ok {
+		if strings.Contains(thingStr, quoteMark) {
+			thingStr = strings.ReplaceAll(thingStr, quoteMark, quoteMark+quoteMark)
+		}
+
+		return fmt.Sprint(quoteMark, thingStr, quoteMark)
+	}
+
+	return fmt.Sprint(thing)
+}
+
+func sanitizedSlice[T any](things []T, quoteMark string) []string {
 	thingsSanitized := make([]string, 0, len(things))
 	for i := range things {
-		thingsSanitized = append(thingsSanitized, sanitizeInput("%v", things[i]))
+		thingsSanitized = append(thingsSanitized, sanitize(things[i], quoteMark))
 	}
 
 	return thingsSanitized
