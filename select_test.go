@@ -40,3 +40,22 @@ func TestSelectById(t *testing.T) {
 		t.Errorf("Got '%s', want '%s'", q, want)
 	}
 }
+
+func TestSelectByIdString(t *testing.T) {
+	type Person struct {
+		Id   string `db:"id"`
+		Name string
+		Age  int
+	}
+	p := Person{Id: "10"}
+
+	want := `select * from "Person" where "id" = '10'`
+	q, err := SelectById(p)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if q != want {
+		t.Errorf("Got '%s', want '%s'", q, want)
+	}
+}
