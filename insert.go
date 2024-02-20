@@ -11,7 +11,7 @@ func Insert(s any) (query string, err error) {
 }
 
 // InsertMultiple creates a 'insert' query from the struct name, and sets all values in the struct, for all the structs in the array
-func InsertMultiple(structs []any) (query string, err error) {
+func InsertMultiple[T any](structs []T) (query string, err error) {
 	sval, err := getStructFromPointer(structs[0])
 	if err != nil {
 		return query, err

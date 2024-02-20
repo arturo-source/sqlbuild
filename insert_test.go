@@ -28,5 +28,23 @@ func TestInsert(t *testing.T) {
 }
 
 func TestInsertMultiple(t *testing.T) {
-	// TODO
+	type Person struct {
+		Name string
+		Age  int
+	}
+	people := []Person{
+		{Name: "John", Age: 10},
+		{Name: "Mike", Age: 20},
+		{Name: "Charl", Age: 30},
+	}
+
+	want := "insert into 'Person' ('Name', 'Age') values ('John', 10), ('Mike', 20), ('Charl', 30)"
+	q, err := InsertMultiple(people)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if q != want {
+		t.Errorf("Want query '%s', got query '%s'", want, q)
+	}
 }
