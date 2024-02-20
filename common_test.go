@@ -135,7 +135,7 @@ func TestGetIdFromFields(t *testing.T) {
 		desc      string
 		fields    reflect.Value
 		wantKey   string
-		wantValue reflect.Value
+		wantValue any
 		wantErr   error
 	}{
 		{
@@ -147,7 +147,7 @@ func TestGetIdFromFields(t *testing.T) {
 			desc:      "Id found",
 			fields:    structWithId,
 			wantKey:   "Id",
-			wantValue: reflect.ValueOf(10),
+			wantValue: 10,
 			wantErr:   nil,
 		},
 	}
@@ -159,7 +159,7 @@ func TestGetIdFromFields(t *testing.T) {
 				t.Errorf("Wanted '%s', got '%s'", tC.wantErr, err)
 			}
 
-			if tC.wantErr == nil && (tC.wantKey != key || tC.wantValue.Interface() != value.Interface()) {
+			if tC.wantErr == nil && (tC.wantKey != key || tC.wantValue != value) {
 				t.Errorf("Wanted %s = %v, got %s = %v", tC.wantKey, tC.wantValue, key, value)
 			}
 		})

@@ -15,10 +15,10 @@ var (
 
 type fields struct {
 	namesOrdered []string
-	nameValues   map[string]reflect.Value
+	nameValues   map[string]any
 }
 
-// newFields (from a struct) saves each field into a map[string]reflect.Value, it will set the Tag `db:""` as key of the map if it is set
+// newFields (from a struct) saves each field into a map[string]any, it will set the Tag `db:""` as key of the map if it is set
 //
 // Example:
 //
@@ -30,7 +30,7 @@ func newFields(val reflect.Value) fields {
 	t := reflect.TypeOf(val.Interface())
 	fields := fields{
 		namesOrdered: make([]string, 0, t.NumField()),
-		nameValues:   make(map[string]reflect.Value),
+		nameValues:   make(map[string]any),
 	}
 
 	for i := 0; i < t.NumField(); i++ {
@@ -40,7 +40,7 @@ func newFields(val reflect.Value) fields {
 			fieldName = field.Name
 		}
 
-		fields.set(fieldName, val.Field(i))
+		fields.set(fieldName, val.Field(i).Interface())
 	}
 
 	return fields
@@ -50,17 +50,17 @@ func (f *fields) len() int {
 	return len(f.namesOrdered)
 }
 
-func (f *fields) set(k string, v reflect.Value) {
+func (f *fields) set(k string, v any) {
 	f.namesOrdered = append(f.namesOrdered, k)
 	f.nameValues[k] = v
 }
 
-func (f *fields) get(k string) reflect.Value {
+func (f *fields) get(k string) any {
 	return f.nameValues[k]
 }
 
 // getId (from fields) finds id case insensitive inside the fields. Returns the original id key, and its value
-func (f *fields) getId() (key string, value reflect.Value, err error) {
+func (f *fields) getId() (key string, value any, err error) {
 	for fieldName, fieldValue := range f.nameValues {
 		if strings.ToLower(fieldName) == "id" {
 			key = fieldName

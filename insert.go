@@ -25,7 +25,7 @@ func InsertMultiple[T any](structs []T) (query string, err error) {
 		fields := newFields(sval)
 		fieldsValues := make([]any, 0, fields.len())
 		for _, fieldName := range fields.namesOrdered {
-			fieldsValues = append(fieldsValues, fields.get(fieldName).Interface())
+			fieldsValues = append(fieldsValues, fields.get(fieldName))
 		}
 
 		multipleFieldsValues = append(multipleFieldsValues, fieldsValues)
