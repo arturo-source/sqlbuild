@@ -31,7 +31,7 @@ func InsertMultiple[T any](structs []T) (query string, err error) {
 		multipleFieldsValues = append(multipleFieldsValues, fieldsValues)
 	}
 
-	queryTemplate := `insert into {{s .tableName "\""}} ({{range $i, $fName := .fieldsNames}}{{if $i}}, {{end}}$fName{{end}}) values {{range $i, $mfv := .multipleFieldsValues}}{{if $i}}, {{end}}({{range $j, $value := $mfv}}{{if $j}}, {{end}}{{$value}}{{end}}){{end}}`
+	queryTemplate := `insert into {{s .tableName "\""}} ({{range $i, $fName := .fieldsNames}}{{if $i}}, {{end}}{{s $fName "\""}}{{end}}) values {{range $i, $mfv := .multipleFieldsValues}}{{if $i}}, {{end}}({{range $j, $value := $mfv}}{{if $j}}, {{end}}{{s $value "'"}}{{end}}){{end}}`
 	query = executeTemplate(queryTemplate, args{"tableName": sName, "fieldsNames": fields.namesOrdered, "multipleFieldsValues": multipleFieldsValues})
 	return
 }

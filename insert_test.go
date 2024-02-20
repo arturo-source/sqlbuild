@@ -16,7 +16,7 @@ func TestInsert(t *testing.T) {
 		Age:  10,
 	}
 
-	want := "insert into 'Person' ('Id', 'Name', 'Age') values (1, 'John', 10)"
+	want := `insert into "Person" ("Id", "Name", "Age") values (1, 'John', 10)`
 	q, err := Insert(p)
 	if err != nil {
 		t.Error(err)
@@ -38,7 +38,7 @@ func TestInsertMultiple(t *testing.T) {
 		{Name: "Charl", Age: 30},
 	}
 
-	want := "insert into 'Person' ('Name', 'Age') values ('John', 10), ('Mike', 20), ('Charl', 30)"
+	want := `insert into "Person" ("Name", "Age") values ('John', 10), ('Mike', 20), ('Charl', 30)`
 	q, err := InsertMultiple(people)
 	if err != nil {
 		t.Error(err)
