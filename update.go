@@ -14,7 +14,7 @@ func Update(s any) (query string, err error) {
 		return query, err
 	}
 
-	queryTemplate := `update {{s .tableName "\""}} set {{range $key, $value := .nameValues}}{{$key}} = {{$value}}, {{end}} where {{s .id "\""}} = {{s .idValue "'"}}`
-	query = executeTemplate(queryTemplate, args{"tableName": sName, "id": idName, "idValue": idValue, "nameValues": fields.nameValues})
+	queryTemplate := `update {{s .tableName "\""}} set {{range $i, $name := .namesOrdered}}{{if $i}}, {{end}}{{s $name "\""}} = {{s (index $.nameValues $name) "'"}}{{end}} where {{s .id "\""}} = {{s .idValue "'"}}`
+	query = executeTemplate(queryTemplate, args{"tableName": sName, "id": idName, "idValue": idValue, "nameValues": fields.nameValues, "namesOrdered": fields.namesOrdered})
 	return
 }
