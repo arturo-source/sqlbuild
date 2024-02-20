@@ -86,23 +86,6 @@ func TestGetStructFieldNames(t *testing.T) {
 		Age  int
 	}
 
-	isSameArray := func(a, b []string) bool {
-		if len(a) != len(b) {
-			return false
-		}
-
-		var timesRepeated int
-		for _, aa := range a {
-			for _, bb := range b {
-				if aa == bb {
-					timesRepeated++
-				}
-			}
-		}
-
-		return timesRepeated == len(a)
-	}
-
 	testCases := []struct {
 		desc   string
 		person any
@@ -137,10 +120,8 @@ func TestGetStructFieldNames(t *testing.T) {
 			}
 
 			fields := newFields(person)
-			fieldNames := fields.getNames()
-
-			if !isSameArray(tC.want, fieldNames) {
-				t.Errorf("Wanted %v, got %v", tC.want, fieldNames)
+			if !reflect.DeepEqual(tC.want, fields.namesOrdered) {
+				t.Errorf("Wanted %v, got %v", tC.want, fields.namesOrdered)
 			}
 		})
 	}
