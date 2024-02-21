@@ -6,12 +6,21 @@ import (
 	"reflect"
 	"strings"
 	"text/template"
+	"time"
 )
 
 var (
 	ErrNoStruct = errors.New("provided value is not a struct")
 	ErrNoId     = errors.New("need an id in the structure")
 )
+
+type ErrNoValidType struct {
+	t string
+}
+
+func (e ErrNoValidType) Error() string {
+	return e.t + " is not a valid type (valid types are bool, int, int8..., uint, uint8..., float32, float64, string and time.Time)"
+}
 
 type fields struct {
 	namesOrdered []string
@@ -118,4 +127,50 @@ func getStructFromPointer(s any) (val reflect.Value, err error) {
 // getStructName returns the name of the struct as a string
 func getStructName(val reflect.Value) string {
 	return reflect.TypeOf(val.Interface()).Name()
+}
+
+// getVarType extracts the variable type and returns the corresponding sql type
+func getVarType(v any) (string, error) {
+	nullable := " not null"
+	val := reflect.ValueOf(v)
+	kind := val.Kind()
+
+	for kind == reflect.Pointer {
+		nullable = ""
+		if val.IsNil() {
+			kind = reflect.TypeOf(v).Elem().Kind()
+			break
+		}
+
+		v = val.Elem().Interface()
+		val = reflect.ValueOf(v)
+		kind = val.Kind()
+	}
+
+	types := map[reflect.Kind]string{
+		reflect.Bool:    "boolean",
+		reflect.Int:     "int",
+		reflect.Int8:    "int",
+		reflect.Int16:   "int",
+		reflect.Int32:   "int",
+		reflect.Int64:   "int",
+		reflect.Uint:    "int unsigned",
+		reflect.Uint8:   "int unsigned",
+		reflect.Uint16:  "int unsigned",
+		reflect.Uint32:  "int unsigned",
+		reflect.Uint64:  "int unsigned",
+		reflect.Float32: "double",
+		reflect.Float64: "double",
+		reflect.String:  "text",
+	}
+
+	if t, ok := types[kind]; ok {
+		return t + nullable, nil
+	}
+
+	if _, ok := v.(time.Time); ok {
+		return "datetime" + nullable, nil
+	}
+
+	return "", ErrNoValidType{kind.String()}
 }
