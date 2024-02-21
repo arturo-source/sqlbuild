@@ -100,10 +100,12 @@ func sanitize(thing any, quoteMark string) any {
 // getStructFromPointer unreferences the pointer until it gets a struct
 func getStructFromPointer(s any) (val reflect.Value, err error) {
 	val = reflect.ValueOf(s)
-
 	kind := val.Kind()
-	if kind == reflect.Pointer {
-		return getStructFromPointer(val.Elem().Interface())
+
+	for kind == reflect.Pointer {
+		s = val.Elem().Interface()
+		val = reflect.ValueOf(s)
+		kind = val.Kind()
 	}
 
 	if kind != reflect.Struct {
