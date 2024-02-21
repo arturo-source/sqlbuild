@@ -1,6 +1,8 @@
 package sqlbuild
 
-// Create creates a 'create table' query from the struct name, and sets all the fields as columns, with the specific type of variable
+// Create creates a 'create table' query from the struct name, and sets all the fields as columns, with the specific type of variable.
+//
+// Create also asigns "id" as primary key, and no-pointers as "not null"
 func Create(s any) (query string, err error) {
 	sval, err := getStructFromPointer(s)
 	if err != nil {
@@ -13,7 +15,7 @@ func Create(s any) (query string, err error) {
 
 	varTypes := make([]string, 0, fields.len())
 	for _, t := range fields.namesOrdered {
-		tValid, err := getVarType(fields.nameValues[t])
+		tValid, err := getVarType(fields.get(t))
 		if err != nil {
 			return query, err
 		}
