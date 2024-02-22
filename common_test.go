@@ -4,6 +4,7 @@ import (
 	"errors"
 	"reflect"
 	"testing"
+	"time"
 )
 
 func TestGetStructFromPointer(t *testing.T) {
@@ -200,4 +201,67 @@ func TestSanitize(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestGetVarType(t *testing.T) {
+	var varint int
+	var varstring string
+	var vartime time.Time
+
+	testCases := []struct {
+		desc  string
+		thing any
+		want  string
+	}{
+		{
+			desc:  "Var type int",
+			thing: varint,
+			want:  "int not null",
+		},
+		{
+			desc:  "Var type pointer to int",
+			thing: &varint,
+			want:  "int",
+		},
+		{
+			desc:  "Var type string",
+			thing: varstring,
+			want:  "text not null",
+		},
+		{
+			desc:  "Var type pointer to string",
+			thing: &varstring,
+			want:  "text",
+		},
+		{
+			desc:  "Var type time.Time",
+			thing: vartime,
+			want:  "datetime not null",
+		},
+		{
+			desc:  "Var type pointer to time.Time",
+			thing: &vartime,
+			want:  "datetime",
+		},
+	}
+	for _, tC := range testCases {
+		t.Run(tC.desc, func(t *testing.T) {
+			sanitized, err := getVarType(tC.thing)
+			if err != nil {
+				t.Error(err)
+			}
+
+			if tC.want != sanitized {
+				t.Errorf("Wanted '%s', got '%s'", tC.want, sanitized)
+			}
+		})
+	}
+
+	t.Run("No valid type", func(t *testing.T) {
+		wantErr := ErrNoValidType{"struct"}
+		_, err := getVarType(struct{}{})
+		if !errors.Is(wantErr, err) {
+			t.Errorf("Wanted '%s', got '%s'", wantErr, err)
+		}
+	})
 }
