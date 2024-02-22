@@ -8,7 +8,7 @@ func SelectAll(s any) (query string, err error) {
 	}
 
 	sName := getStructName(sval)
-	query = executeTemplate(`select * from {{s .tableName "\""}}`, args{"tableName": sName})
+	query = executeTemplate(`select * from {{sK .tableName}}`, args{"tableName": sName})
 	return
 }
 
@@ -26,8 +26,7 @@ func SelectById(s any) (query string, err error) {
 		return query, err
 	}
 
-	query = executeTemplate(
-		`select * from {{s .tableName "\""}} where {{s .id "\""}} = {{s .idValue "'"}}`,
-		args{"tableName": sName, "id": idName, "idValue": idValue})
+	queryTemplate := `select * from {{sK .tableName}} where {{sK .id}} = {{sV .idValue}}`
+	query = executeTemplate(queryTemplate, args{"tableName": sName, "id": idName, "idValue": idValue})
 	return
 }

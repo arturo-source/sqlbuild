@@ -84,9 +84,15 @@ func (f *fields) getId() (key string, value any, err error) {
 
 type args map[string]any
 
-// executeTemplate adds "s" func to avoid sql injections, and executes the query as text/template
+// executeTemplate adds "sV" and "sK" funcs to avoid sql injections, and executes the query as text/template
 func executeTemplate(query string, arguments args) string {
-	t := template.Must(template.New("query").Funcs(template.FuncMap{"s": sanitize}).Parse(query))
+	t := template.New("query")
+	t = t.Funcs(template.FuncMap{
+		"sV": func(v any) any { return sanitize(v, "'") },
+		"sK": func(v any) any { return sanitize(v, "\"") },
+	})
+	t = template.Must(t.Parse(query))
+
 	buf := &bytes.Buffer{}
 	t.Execute(buf, arguments)
 
