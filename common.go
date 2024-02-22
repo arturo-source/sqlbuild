@@ -105,6 +105,11 @@ func sanitize(thing any, quoteMark string) any {
 		return "null"
 	}
 
+	// https://codefibershq.com/blog/golang-why-nil-is-not-always-nil
+	if val := reflect.ValueOf(thing); val.Kind() == reflect.Pointer && val.IsNil() {
+		return "null"
+	}
+
 	if thingStr, ok := thing.(string); ok {
 		if strings.Contains(thingStr, quoteMark) {
 			thingStr = strings.ReplaceAll(thingStr, quoteMark, quoteMark+quoteMark)
