@@ -192,6 +192,12 @@ func TestSanitize(t *testing.T) {
 			quoteMark: "'",
 			want:      10,
 		},
+		{
+			desc:      "Sanitize nil",
+			thing:     nil,
+			quoteMark: "'",
+			want:      "null",
+		},
 	}
 	for _, tC := range testCases {
 		t.Run(tC.desc, func(t *testing.T) {

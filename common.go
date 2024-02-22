@@ -101,6 +101,10 @@ func executeTemplate(query string, arguments args) string {
 
 // sanitize checks if the `thing` contains `quoteMark`, to avoid sql injections
 func sanitize(thing any, quoteMark string) any {
+	if thing == nil {
+		return "null"
+	}
+
 	if thingStr, ok := thing.(string); ok {
 		if strings.Contains(thingStr, quoteMark) {
 			thingStr = strings.ReplaceAll(thingStr, quoteMark, quoteMark+quoteMark)
