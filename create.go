@@ -23,7 +23,7 @@ func Create(s any) (query string, err error) {
 		varTypes = append(varTypes, tValid)
 	}
 
-	queryTemplate := `create table {{sK .tableName}} ({{range $i, $name := .namesOrdered}}{{if $i}}, {{end}}{{sK $name}} {{index $.varTypes $i}}{{if eq $name $.idName}} auto_increment primary key{{end}}{{end}})`
+	queryTemplate := `CREATE TABLE {{sK .tableName}} ({{range $i, $name := .namesOrdered}}{{if $i}}, {{end}}{{sK $name}} {{index $.varTypes $i}}{{if eq $name $.idName}} PRIMARY KEY{{end}}{{end}})`
 	query = executeTemplate(queryTemplate, args{"tableName": sName, "idName": idName, "namesOrdered": fields.namesOrdered, "varTypes": varTypes})
 	return
 }

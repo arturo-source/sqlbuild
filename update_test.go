@@ -17,7 +17,7 @@ func TestUpdate(t *testing.T) {
 		Age:  10,
 	}
 
-	want := `update "Person" set "Id" = 1, "Name" = 'John', "Age" = 10 where "Id" = 1`
+	want := `update "Person" set "Id" = 1, "Name" = 'John', "Age" = 10 WHERE "Id" = 1`
 	q, err := Update(p)
 	if err != nil {
 		t.Error(err)
@@ -40,7 +40,7 @@ func TestUpdateWithFieldPointer(t *testing.T) {
 		Age:  nil,
 	}
 
-	want := `update "Person" set "Id" = 1, "Name" = 'John', "Age" = null where "Id" = 1`
+	want := `update "Person" set "Id" = 1, "Name" = 'John', "Age" = null WHERE "Id" = 1`
 	q, err := Update(p)
 	if err != nil {
 		t.Error(err)

@@ -222,32 +222,32 @@ func TestGetVarType(t *testing.T) {
 		{
 			desc:  "Var type int",
 			thing: varint,
-			want:  "int not null",
+			want:  "INT NOT NULL",
 		},
 		{
 			desc:  "Var type pointer to int",
 			thing: &varint,
-			want:  "int",
+			want:  "INT",
 		},
 		{
 			desc:  "Var type string",
 			thing: varstring,
-			want:  "text not null",
+			want:  "TEXT NOT NULL",
 		},
 		{
 			desc:  "Var type pointer to string",
 			thing: &varstring,
-			want:  "text",
+			want:  "TEXT",
 		},
 		{
 			desc:  "Var type time.Time",
 			thing: vartime,
-			want:  "datetime not null",
+			want:  "DATETIME NOT NULL",
 		},
 		{
 			desc:  "Var type pointer to time.Time",
 			thing: &vartime,
-			want:  "datetime",
+			want:  "DATETIME",
 		},
 	}
 	for _, tC := range testCases {

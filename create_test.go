@@ -17,7 +17,7 @@ func TestCreate(t *testing.T) {
 		Age:  nil,
 	}
 
-	want := `create table "Person" ("Id" int not null auto_increment primary key, "Name" text not null, "Age" int)`
+	want := `CREATE TABLE "Person" ("Id" INT NOT NULL PRIMARY KEY, "Name" TEXT NOT NULL, "Age" INT)`
 	q, err := Create(p)
 	if err != nil {
 		t.Error(err)

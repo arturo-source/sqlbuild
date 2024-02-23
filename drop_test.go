@@ -9,7 +9,7 @@ func TestDrop(t *testing.T) {
 	}
 	p := Person{}
 
-	want := `drop table "Person"`
+	want := `DROP TABLE "Person"`
 	q, err := Drop(p)
 	if err != nil {
 		t.Error(err)

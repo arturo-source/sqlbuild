@@ -146,7 +146,7 @@ func getStructName(val reflect.Value) string {
 
 // getVarType extracts the variable type and returns the corresponding sql type
 func getVarType(v any) (string, error) {
-	nullable := " not null"
+	nullable := " NOT NULL"
 	val := reflect.ValueOf(v)
 	kind := val.Kind()
 
@@ -163,20 +163,20 @@ func getVarType(v any) (string, error) {
 	}
 
 	types := map[reflect.Kind]string{
-		reflect.Bool:    "boolean",
-		reflect.Int:     "int",
-		reflect.Int8:    "int",
-		reflect.Int16:   "int",
-		reflect.Int32:   "int",
-		reflect.Int64:   "int",
-		reflect.Uint:    "int unsigned",
-		reflect.Uint8:   "int unsigned",
-		reflect.Uint16:  "int unsigned",
-		reflect.Uint32:  "int unsigned",
-		reflect.Uint64:  "int unsigned",
-		reflect.Float32: "double",
-		reflect.Float64: "double",
-		reflect.String:  "text",
+		reflect.Bool:    "BOOLEAN",
+		reflect.Int:     "INT",
+		reflect.Int8:    "INT",
+		reflect.Int16:   "INT",
+		reflect.Int32:   "INT",
+		reflect.Int64:   "INT",
+		reflect.Uint:    "INT UNSIGNED",
+		reflect.Uint8:   "INT UNSIGNED",
+		reflect.Uint16:  "INT UNSIGNED",
+		reflect.Uint32:  "INT UNSIGNED",
+		reflect.Uint64:  "INT UNSIGNED",
+		reflect.Float32: "DOUBLE",
+		reflect.Float64: "DOUBLE",
+		reflect.String:  "TEXT",
 	}
 
 	if t, ok := types[kind]; ok {
@@ -184,7 +184,7 @@ func getVarType(v any) (string, error) {
 	}
 
 	if _, ok := v.(time.Time); ok {
-		return "datetime" + nullable, nil
+		return "DATETIME" + nullable, nil
 	}
 
 	return "", ErrNoValidType{kind.String()}

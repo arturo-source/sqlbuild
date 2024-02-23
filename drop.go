@@ -8,6 +8,6 @@ func Drop(s any) (query string, err error) {
 	}
 
 	sName := getStructName(sval)
-	query = executeTemplate(`drop table {{sK .tableName}}`, args{"tableName": sName})
+	query = executeTemplate(`DROP TABLE {{sK .tableName}}`, args{"tableName": sName})
 	return
 }

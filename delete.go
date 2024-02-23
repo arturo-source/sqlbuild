@@ -8,7 +8,7 @@ func DeleteAll(s any) (query string, err error) {
 	}
 
 	sName := getStructName(sval)
-	query = executeTemplate(`delete from {{sK .tableName}}`, args{"tableName": sName})
+	query = executeTemplate(`DELETE FROM {{sK .tableName}}`, args{"tableName": sName})
 	return
 }
 
@@ -26,7 +26,7 @@ func DeleteById(s any) (query string, err error) {
 		return query, err
 	}
 
-	queryTemplate := `delete from {{sK .tableName}} where {{sK .id}} = {{sV .idValue}}`
+	queryTemplate := `DELETE FROM {{sK .tableName}} WHERE {{sK .id}} = {{sV .idValue}}`
 	query = executeTemplate(queryTemplate, args{"tableName": sName, "id": idName, "idValue": idValue})
 	return
 }
