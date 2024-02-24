@@ -57,9 +57,13 @@ DROP TABLE "Person"
 INSERT INTO "Person" ("id", "Name", "age") VALUES (0, 'John', 20), (1, 'Mike', null), (2, 'Cris', null)
 ```
 
+## Main problems
+
 There are some problems that I have not been able to standardize, such as **AUTO_INCREMENT is written differently in each database engine**, and I wanted this package to be database agnostic. So the CREATE TABLE does not contain a clause to increment the id.
 
 Another problem that I'm thinking about how to solve is **references between tables**, because obviously, it is very common in SQL databases to have relationships between tables.
+
+And the last one is that **I don't really know how to avoid SQL injections**, so I created the `sanitize` function, but this only duplicates quotes.
 
 ## Possible uses of this package
 
