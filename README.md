@@ -50,7 +50,7 @@ CREATE TABLE "Person" ("id" INT NOT NULL PRIMARY KEY, "Name" TEXT NOT NULL, "age
 SELECT * FROM "Person"
 SELECT * FROM "Person" WHERE "id" = 0
 INSERT INTO "Person" ("id", "Name", "age") VALUES (0, 'John', 20)
-update "Person" set "id" = 0, "Name" = 'John', "age" = 20 WHERE "id" = 0
+UPDATE "Person" SET "id" = 0, "Name" = 'John', "age" = 20 WHERE "id" = 0
 DELETE FROM "Person"
 DELETE FROM "Person" WHERE "id" = 0
 DROP TABLE "Person"
